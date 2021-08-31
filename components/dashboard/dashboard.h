@@ -13,6 +13,7 @@ namespace dashboard {
 class Dashboard : public Component, public ESPDash {
  public:
   Dashboard(web_server_base::WebServerBase *base);
+  ~Dashboard();
 
   void setup() override;  // call mark_failed if fails setting up comms
   void dump_config() override;

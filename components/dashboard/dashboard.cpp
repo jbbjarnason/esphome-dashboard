@@ -12,6 +12,10 @@ Dashboard::Dashboard(web_server_base::WebServerBase *base):
 {
 }
 
+Dashboard::~Dashboard() {
+  base_->deinit();
+}
+
 void Dashboard::setup() {
   base_->init();
   ESPDash::init(base_->get_server());
