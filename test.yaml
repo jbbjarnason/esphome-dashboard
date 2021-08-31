@@ -1,0 +1,109 @@
+esphome:
+  name: test_dashboard
+  platform: ESP32
+  board: nodemcu-32s
+  libraries:
+    - https://github.com/jbbjarnason/ESP-DASH
+
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          ESP_LOGD("BOOT", "target temp %d", id(target_temperature_value));
+          heater_target_temp->update(id(target_temperature_value));
+          heater_increase_temp->update(true);
+          heater_decrese_temp->update(true);
+          esp_dash->sendUpdates();
+
+
+external_components:
+  - source:
+      type: local
+      path: components
+
+globals:
+  - id: target_temperature_value
+    type: int
+    restore_value: no
+    initial_value: '37'
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: ""
+  reboot_timeout: 0s
+
+wifi:
+  ssid: "<YOUR WIFI>"
+  password: "<YOUR WIFI PASSWORD>"
+  ap:
+    ssid: "Fallback Hotspot"
+    password: "Th1s1s4P4ssw0rd"
+
+captive_portal:
+
+dallas:
+  - pin: GPIO4
+    update_interval: 2s
+
+sensor:
+  - platform: dallas
+    address: 0xF93CFFD607996628 # Use your address
+    name: Temperature
+    id : dallas_temp_sensor
+    on_value:
+      then:
+        - lambda: |-
+            heater_sensor_temp->update(x);
+
+dashboard:
+  id: esp_dash
+  port: 80
+  charts:
+    - id: barchart
+      type: "bar"
+      name: "chart in front page"
+  tabs:
+    - id: adjust_tub
+      name: "Example 1"
+      navigation_name: "Example 1"
+      header: "Example 1"
+      cards:
+        - id: heater_target_temp
+          type: "slider"
+          name: "Target Temperature"
+          unit_of_measurement: "°C"
+          min_value: 5
+          max_value: 45
+          lambda: |-
+            ESP_LOGD("heater", "new value: %d", value);
+        - id: heater_sensor_temp
+          type: "temperature"
+          name: "Sensor Temperature"
+          unit_of_measurement: "°C"
+        - id: heater_increase_temp
+          type: "button"
+          name: "+1 °C"
+          lambda: |-
+            id(target_temperature_value) += 1;
+            ESP_LOGD("heater", "target temp %d", id(target_temperature_value));
+            heater_target_temp->update(id(target_temperature_value));
+            esp_dash->sendUpdates();
+        - id: heater_decrese_temp
+          type: "button"
+          name: "-1 °C"
+          lambda: |-
+            id(target_temperature_value) -= 1;
+            ESP_LOGD("heater", "target temp %d", id(target_temperature_value));
+            heater_target_temp->update(id(target_temperature_value));
+            esp_dash->sendUpdates();
+    - id: advanced_tab
+      name: "Example 2"
+      navigation_name: "Example 2"
+      header: "Example 2"
+      charts:
+        - id: power
+          type: "bar"
+          name: "A second tab chart"
