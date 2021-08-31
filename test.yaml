@@ -1,5 +1,5 @@
 esphome:
-  name: test_dashboard
+  name: dashboard
   platform: ESP32
   board: nodemcu-32s
   libraries:
