@@ -1,7 +1,7 @@
 # esphome-dashboard
 The objective of this external esphome component is to easily create a webpage in the esphome environment. 
 esphome has an extensive sets of sensor interfaces and automations but lacks the configurable onboard webpage. 
-So hopefully this can achieve most use cases, please file a feature request if there is something lacking.
+So hopefully this can achieve most use cases, please file a feature request if there is something missing.
 
 ## Preview
 ![](images/preview.png)
@@ -79,6 +79,7 @@ dashboard:
 ## Configuration variables:
 
 ### dashboard
+
 - id(Optional, [ID](https://esphome.io/guides/configuration-types.html#config-id)): The variable name in the generated code, this id can be used in lambdas.
 - port(Optional, int): The port the web server should open its socket on.
 - auth(Optional): Enables basic authentication with username and password.
