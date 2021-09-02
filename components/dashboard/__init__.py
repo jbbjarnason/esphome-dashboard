@@ -26,8 +26,7 @@ CONF_CHARTS = "charts"
 CONF_DEFAULT_VALUE = "default_value"
 CONF_NAVIGATION_NAME = "navigation_name"
 CONF_HEADER = "header"
-CONF_UPDATE_X_AXIS = "update_x_axis"
-CONF_UPDATE_Y_AXIS = "update_y_axis"
+CONF_STATISTICS = "statistics"
 
 CODEOWNERS = ["@jbbjarnason"]
 DEPENDENCIES = ["network"]
@@ -77,8 +76,6 @@ CHARTS_SCHEMA = cv.Schema(
         cv.GenerateID(): cv.declare_id(ChartClass),
         cv.Required(CONF_TYPE): cv.enum(CHART_TYPES),
         cv.Required(CONF_NAME): cv.string_strict,
-        cv.Optional(CONF_UPDATE_X_AXIS): cv.lambda_,
-        cv.Optional(CONF_UPDATE_Y_AXIS): cv.lambda_,
     }
 )
 
@@ -87,7 +84,7 @@ TABS_SCHEMA = cv.Schema(
         cv.GenerateID(): cv.declare_id(TabClass),
         cv.Required(CONF_NAME): cv.string_strict,
         cv.Required(CONF_NAVIGATION_NAME): cv.string_strict,
-        cv.Required(CONF_HEADER): cv.string_strict,
+        cv.Optional(CONF_HEADER): cv.string_strict,
         cv.Optional(CONF_CARDS): cv.ensure_list(CARDS_SCHEMA),
         cv.Optional(CONF_CHARTS): cv.ensure_list(CHARTS_SCHEMA),
     }
@@ -103,6 +100,7 @@ CONFIG_SCHEMA = cv.Schema(
                 cv.Required(CONF_PASSWORD): cv.string_strict,
             }
         ),
+        cv.Optional(CONF_STATISTICS): cv.boolean,
         cv.Optional(CONF_TABS): cv.ensure_list(TABS_SCHEMA),
         cv.Optional(CONF_CARDS): cv.ensure_list(CARDS_SCHEMA),
         cv.Optional(CONF_CHARTS): cv.ensure_list(CHARTS_SCHEMA),
@@ -124,6 +122,10 @@ async def create_cards(config: dict, parent: MockObj):
             card[CONF_MIN_VALUE] if CONF_MIN_VALUE in card else 0,
             card[CONF_MAX_VALUE] if CONF_MAX_VALUE in card else 0,
         )
+
+        if CONF_DEFAULT_VALUE in card:
+            cg.add(new_card.update(card[CONF_DEFAULT_VALUE]))
+
         if CONF_LAMBDA in card:
             lambda_ = await cg.process_lambda(card[CONF_LAMBDA], [(int, "value")], return_type=cg.void)
             cg.add(new_card.attachCallback(lambda_))
@@ -152,13 +154,16 @@ async def to_code(config):
         auth = config[CONF_AUTH]
         cg.add(dash.setAuthentication(auth[CONF_USERNAME], auth[CONF_PASSWORD]))
 
+    if CONF_STATISTICS in config:
+        cg.add(dash.displayStatistics(config[CONF_STATISTICS]))
+
     for tab in config.get(CONF_TABS, []):
         new_tab = cg.new_Pvariable(
             tab[CONF_ID],
             dash,
             tab[CONF_NAME],
             tab[CONF_NAVIGATION_NAME],
-            tab[CONF_HEADER]
+            tab[CONF_HEADER] if CONF_HEADER in tab else ""
         )
         await create_cards(tab, new_tab)
         create_charts(tab, new_tab)

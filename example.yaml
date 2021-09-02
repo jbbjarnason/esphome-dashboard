@@ -10,16 +10,9 @@ esphome:
     then:
       - lambda: |-
           ESP_LOGD("BOOT", "target temp %d", id(target_temperature_value));
-          heater_target_temp->update(id(target_temperature_value));
-          heater_increase_temp->update(true);
-          heater_decrese_temp->update(true);
-          esp_dash->sendUpdates();
-
 
 external_components:
-  - source:
-      type: git
-      url: https://github.com/jbbjarnason/esphome-dashboard
+  - source: github://jbbjarnason/esphome-dashboard
 
 globals:
   - id: target_temperature_value
@@ -75,6 +68,7 @@ dashboard:
           type: "slider"
           name: "Target Temperature"
           unit_of_measurement: "°C"
+          default_value: 37
           min_value: 5
           max_value: 45
           lambda: |-
@@ -86,6 +80,7 @@ dashboard:
         - id: heater_increase_temp
           type: "button"
           name: "+1 °C"
+          default_value: true
           lambda: |-
             id(target_temperature_value) += 1;
             ESP_LOGD("heater", "target temp %d", id(target_temperature_value));
@@ -94,6 +89,7 @@ dashboard:
         - id: heater_decrese_temp
           type: "button"
           name: "-1 °C"
+          default_value: true
           lambda: |-
             id(target_temperature_value) -= 1;
             ESP_LOGD("heater", "target temp %d", id(target_temperature_value));
