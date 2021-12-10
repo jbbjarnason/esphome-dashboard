@@ -1,6 +1,7 @@
 #include "dashboard.h"
 #include "esphome/core/util.h"
 #include "esphome/core/log.h"
+#include "esphome/components/network/util.h"
 
 using namespace esphome::dashboard;
 
@@ -22,5 +23,5 @@ void Dashboard::setup() {
 }
 void Dashboard::dump_config() {
   ESP_LOGCONFIG(TAG, "Web Server:");
-  ESP_LOGCONFIG(TAG, "  Address: %s:%u", network_get_address().c_str(), base_->get_port());
+  ESP_LOGCONFIG(TAG, "  Address: %s:%u", esphome::network::get_ip_address().str().c_str(), base_->get_port());
 }
