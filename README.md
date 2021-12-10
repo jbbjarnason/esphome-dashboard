@@ -4,6 +4,9 @@ esphome has an extensive sets of sensor interfaces and automations but lacks the
 So hopefully this can achieve most use cases, please file a feature request if there is something missing.
 
 ## Preview
+![](images/esphome-dashboard.gif)
+
+
 ![](images/preview.png)
 
 ## Prerequisite
