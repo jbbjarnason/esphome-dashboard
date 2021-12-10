@@ -7,7 +7,7 @@ using namespace esphome::dashboard;
 
 static const char *const TAG = "dashboard";
 
-Dashboard::Dashboard(web_server_base::WebServerBase *base):
+Dashboard::Dashboard(std::shared_ptr<web_server_base::WebServerBase> base):
   ESPDash(),
   base_(base)
 {
