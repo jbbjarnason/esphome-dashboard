@@ -3,6 +3,8 @@ esphome:
   platform: ESP32
   board: nodemcu-32s
   libraries:
+    - FS
+    - Wifi
     - https://github.com/jbbjarnason/ESP-DASH
 
   on_boot:
