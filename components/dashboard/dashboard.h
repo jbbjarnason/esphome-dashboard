@@ -12,7 +12,7 @@ namespace dashboard {
 
 class Dashboard : public Component, public ESPDash {
  public:
-  Dashboard(std::shared_ptr<web_server_base::WebServerBase> base);
+  Dashboard(web_server_base::WebServerBase *base);
   ~Dashboard();
 
   void setup() override;  // call mark_failed if fails setting up comms
@@ -23,7 +23,7 @@ class Dashboard : public Component, public ESPDash {
   }
 
  protected:
-  std::shared_ptr<web_server_base::WebServerBase> base_{ nullptr };
+  web_server_base::WebServerBase *base_;
   uint16_t port_{80};
 };
 } // namespace dashboard
